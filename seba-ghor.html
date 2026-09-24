@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>সেবা ঘর | Seba Ghor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0a6e42; --green-dark:#064a2d; --red:#d6321f; --gold:#c9962b;
+  --bg:#f7f4ee; --card:#ffffff; --ink:#20241f; --ink-soft:#5c665c; --line:#e5e1d6;
+  --pending:#c9962b; --accepted:#0a6e42; --rejected:#b0392c; --completed:#3a5a8c;
+  --radius:14px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#12160f; --card:#1b2018; --ink:#eef0e8; --ink-soft:#a9b2a2; --line:#2b3126; }
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Noto Sans',sans-serif;height:100%;}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:76px;}
+.demo-switch{display:flex;gap:6px;padding:8px 12px;background:var(--green-dark);}
+.demo-switch button{flex:1;padding:7px 4px;border:none;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-family:inherit;cursor:pointer;}
+.demo-switch button.active{background:#fff;color:var(--green-dark);font-weight:600;}
+header.top{background:var(--green);color:#fff;padding:14px 16px 18px;border-radius:0 0 20px 20px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;}
+.logo{font-size:18px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;cursor:pointer;}
+.dot{position:absolute;top:-2px;right:-2px;width:9px;height:9px;background:var(--red);border-radius:50%;border:2px solid var(--green);}
+.loc{font-size:12px;opacity:.9;margin-top:8px;}
+.search{margin-top:12px;background:#fff;border-radius:12px;padding:12px 14px;color:var(--ink-soft);font-size:14px;}
+main{padding:16px;}
+h2.section{font-size:15px;font-weight:600;margin:18px 0 10px;color:var(--ink);}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.cat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 4px;text-align:center;font-size:11px;cursor:pointer;}
+.cat .em{font-size:22px;display:block;margin-bottom:4px;}
+.provider-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:12px;display:flex;gap:10px;}
+.avatar{width:52px;height:52px;border-radius:12px;background:#eef1ea;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.pinfo{flex:1;min-width:0;}
+.pname{font-weight:600;font-size:14px;display:flex;align-items:center;gap:4px;}
+.badge-verified{color:var(--green);font-size:12px;}
+.pmeta{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+.pstatus{font-size:11px;margin-top:3px;font-weight:600;}
+.pstatus.on{color:var(--green);} .pstatus.off{color:var(--ink-soft);}
+.btn{border:none;border-radius:9px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-primary{background:var(--green);color:#fff;}
+.btn-primary:disabled{background:#b7c4b7;}
+.btn-outline{background:transparent;border:1px solid var(--line);color:var(--ink);}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-row{display:flex;gap:8px;margin-top:8px;}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--card);border-top:1px solid var(--line);display:flex;padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));}
+.nav-item{flex:1;text-align:center;font-size:10px;color:var(--ink-soft);cursor:pointer;}
+.nav-item .em{font-size:19px;display:block;}
+.nav-item.active{color:var(--green);font-weight:600;}
+.view{display:none;}
+.view.active{display:block;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:50;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--card);width:100%;max-width:480px;margin:0 auto;border-radius:20px 20px 0 0;padding:18px;max-height:88vh;overflow-y:auto;}
+.modal h3{margin:0 0 12px;font-size:16px;}
+.field{margin-bottom:10px;}
+.field label{font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px;}
+.field input,.field textarea,.field select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:14px;background:var(--bg);color:var(--ink);}
+.field textarea{resize:vertical;min-height:60px;}
+.close-x{float:right;cursor:pointer;color:var(--ink-soft);font-size:20px;line-height:1;}
+.req-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:10px;}
+.req-top{display:flex;justify-content:space-between;align-items:center;}
+.status-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;color:#fff;}
+.status-chip.pending{background:var(--pending);}
+.status-chip.accepted{background:var(--accepted);}
+.status-chip.rejected{background:var(--rejected);}
+.status-chip.completed{background:var(--completed);}
+.tag-row{display:flex;gap:6px;margin:12px 0;overflow-x:auto;}
+.tag{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1px solid var(--line);font-size:12px;cursor:pointer;background:var(--card);}
+.tag.active{background:var(--green);color:#fff;border-color:var(--green);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;}
+.stat .num{font-size:22px;font-weight:700;color:var(--green);}
+.stat .lbl{font-size:11px;color:var(--ink-soft);margin-top:2px;}
+.alert-box{background:#fbe9e7;border:1px solid var(--red);color:var(--red);border-radius:12px;padding:10px 12px;font-size:12px;margin-bottom:12px;}
+.avail-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:14px;}
+.switch{width:42px;height:24px;background:var(--line);border-radius:20px;position:relative;cursor:pointer;}
+.switch.on{background:var(--green);}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s;}
+.switch.on::after{left:20px;}
+.empty{text-align:center;color:var(--ink-soft);font-size:13px;padding:30px 10px;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:30px;font-size:13px;z-index:60;max-width:90%;text-align:center;opacity:0;transition:.25s;pointer-events:none;}
+.toast.show{opacity:1;}
+.plans{display:flex;gap:8px;margin-top:6px;}
+.plan{flex:1;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:11px;background:var(--card);}
+.plan b{display:block;color:var(--gold);font-size:13px;}
+.authtabs{display:flex;gap:8px;margin-bottom:16px;}
+.authtabs div{flex:1;text-align:center;padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:13px;cursor:pointer;}
+.authtabs div.active{background:var(--green);color:#fff;border-color:var(--green);}
+.link-btn{color:var(--green);text-align:center;font-size:12px;margin-top:12px;cursor:pointer;font-weight:600;}
+.auth-hero{text-align:center;padding:22px 0 6px;}
+.auth-hero .em{font-size:38px;}
+.auth-hero h3{margin:8px 0 2px;font-size:17px;}
+.auth-hero p{margin:0;font-size:12px;color:var(--ink-soft);}
+.err-msg{color:var(--red);font-size:12px;margin:-4px 0 10px;display:none;}
+.hint{font-size:11px;color:var(--ink-soft);margin-top:-6px;margin-bottom:10px;}
+.top-user{font-size:11px;opacity:.9;display:flex;align-items:center;gap:6px;}
+.logout-link{color:var(--red);font-size:12px;font-weight:600;cursor:pointer;margin-top:10px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="demo-switch">
+    <button data-role="customer" class="active">👤 কাস্টমার</button>
+    <button data-role="provider">🛠️ প্রোভাইডার</button>
+  </div>
+
+  <!-- ===== AUTH VIEWS ===== -->
+  <div id="view-customer-auth" class="view" data-role="customer">
+    <main>
+      <div class="auth-hero"><span class="em">🏠</span><h3>সেবা ঘর — কাস্টমার</h3><p>সেবা Request করতে লগ ইন করুন</p></div>
+      <div class="authtabs">
+        <div id="custTabLogin" class="active" onclick="setAuthTab('cust','login')">লগ ইন</div>
+        <div id="custTabSignup" onclick="setAuthTab('cust','signup')">নতুন অ্যাকাউন্ট</div>
+      </div>
+      <div id="custLoginForm">
+        <div class="field"><label>মোবাইল নম্বর</label><input id="clMobile" placeholder="01XXXXXXXXX"></div>
+        <div class="field"><label>পাসওয়ার্ড</label><input id="clPass" type="password" placeholder="••••••"></div>
+        <div class="err-msg" id="custLoginErr"></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="doCustomerLogin()">লগ ইন করুন</button>
+      </div>
+      <div id="custSignupForm" style="display:none">
+        <div class="field"><label>পুরো নাম</label><input id="csName" placeholder="যেমনঃ রহিম উদ্দিন"></div>
+        <div class="field"><label>মোবাইল নম্বর</label><input id="csMobile" placeholder="01XXXXXXXXX"></div>
+        <div class="field"><label>ঠিকানা (জেলা/উপজেলা)</label><input id="csAddress" placeholder="দেবীগঞ্জ, রংপুর"></div>
+        <div class="field"><label>পাসওয়ার্ড</label><input id="csPass" type="password" placeholder="••••••"></div>
+        <div class="err-msg" id="custSignupErr"></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="doCustomerRegister()">অ্যাকাউন্ট তৈরি করুন</button>
+      </div>
+    </main>
+  </div>
+
+  <div id="view-provider-auth" class="view" data-role="provider">
+    <main>
+      <div class="auth-hero"><span class="em">🛠️</span><h3>সেবা ঘর — প্রোভাইডার</h3><p>Request পেতে লগ ইন বা রেজিস্ট্রেশন করুন</p></div>
+      <div class="authtabs">
+        <div id="provTabLogin" class="active" onclick="setAuthTab('prov','login')">লগ ইন</div>
+        <div id="provTabSignup" onclick="setAuthTab('prov','signup')">রেজিস্ট্রেশন</div>
+      </div>
+      <div id="provLoginForm">
+        <div class="field"><label>মোবাইল নম্বর</label><input id="plMobile" placeholder="01XXXXXXXXX"></div>
+        <div class="field"><label>পাসওয়ার্ড</label><input id="plPass" type="password" placeholder="••••••"></div>
+        <div class="err-msg" id="provLoginErr"></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="doProviderLogin()">লগ ইন করুন</button>
+        <div class="hint" style="margin-top:10px;">ডেমো: 01711000001 / demo123 (করিম ইলেকট্রিক)</div>
+      </div>
+      <div id="provSignupForm" style="display:none">
+        <div class="field"><label>নাম</label><input id="psName" placeholder="আপনার নাম"></div>
+        <div class="field"><label>মোবাইল নম্বর</label><input id="psMobile" placeholder="01XXXXXXXXX"></div>
+        <div class="field"><label>ব্যবসা/সেবার নাম</label><input id="psBusiness" placeholder="যেমনঃ করিম ইলেকট্রিক সার্ভিস"></div>
+        <div class="field"><label>ক্যাটাগরি</label><select id="psCat"></select></div>
+        <div class="field"><label>জেলা</label><input id="psDistrict" placeholder="রংপুর"></div>
+        <div class="field"><label>উপজেলা/এলাকা</label><input id="psUpazila" placeholder="দেবীগঞ্জ"></div>
+        <div class="field"><label>সম্পূর্ণ ঠিকানা</label><input id="psAddress" placeholder="বাসা/রোড নং"></div>
+        <div class="field"><label>শুরু মূল্য (আনুমানিক)</label><input id="psPrice" placeholder="যেমনঃ ৩০০৳ থেকে"></div>
+        <div class="field"><label>কর্মঘণ্টা</label><input id="psHours" placeholder="সকাল ৮টা - রাত ৯টা"></div>
+        <div class="field"><label>বিবরণ</label><textarea id="psDesc" placeholder="আপনার সেবা সম্পর্কে লিখুন"></textarea></div>
+        <div class="field"><label>পাসওয়ার্ড</label><input id="psPass" type="password" placeholder="••••••"></div>
+        <div class="err-msg" id="provSignupErr"></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="doProviderRegister()">রেজিস্ট্রেশন সম্পন্ন করুন</button>
+        <div class="hint" style="margin-top:10px;">রেজিস্ট্রেশনের পর আপনার স্ট্যাটাস "Pending Verification" থাকবে। অ্যাডমিন Approve করলে তবেই আপনি পাবলিকলি দৃশ্যমান হবেন।</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== CUSTOMER VIEWS ===== -->
+  <div id="view-customer-home" class="view" data-role="customer">
+    <header class="top">
+      <div class="top-row">
+        <div class="logo">🏠 সেবা ঘর</div>
+        <div style="display:flex;gap:8px;">
+          <div class="icon-btn" onclick="go('customer-notif')">🔔<span class="dot" id="custNotifDot" style="display:none"></span></div>
+          <div class="icon-btn" onclick="alertMsg('লোকেশন পরিবর্তন শীঘ্রই আসছে')">📍</div>
+        </div>
+      </div>
+      <div class="loc">রংপুর বিভাগ, দেবীগঞ্জ</div>
+      <div class="search" onclick="go('customer-search')">🔍 আপনার কী সেবা প্রয়োজন?</div>
+    </header>
+    <main>
+      <h2 class="section">জনপ্রিয় ক্যাটাগরি</h2>
+      <div class="cats" id="catGrid"></div>
+
+      <h2 class="section">কাছাকাছি ভেরিফাইড প্রোভাইডার</h2>
+      <div id="providerList"></div>
+    </main>
+  </div>
+
+  <div id="view-customer-search" class="view" data-role="customer">
+    <header class="top">
+      <div class="top-row"><span class="close-x" onclick="go('customer-home')">✕</span><div class="logo">সব ক্যাটাগরি</div><span></span></div>
+    </header>
+    <main>
+      <div class="cats" id="catGridFull"></div>
+    </main>
+  </div>
+
+  <div id="view-customer-category" class="view" data-role="customer">
+    <header class="top">
+      <div class="top-row"><span class="close-x" onclick="go('customer-home')">✕</span><div class="logo" id="catTitle"></div><span></span></div>
+    </header>
+    <main><div id="catProviderList"></div></main>
+  </div>
+
+  <div id="view-customer-requests" class="view" data-role="customer">
+    <header class="top"><div class="top-row"><div class="logo">📋 আমার Request সমূহ</div><span></span></div></header>
+    <main>
+      <div class="tag-row" id="reqFilterRow"></div>
+      <div id="myRequestsList"></div>
+    </main>
+  </div>
+
+  <div id="view-customer-notif" class="view" data-role="customer">
+    <header class="top"><div class="top-row"><span class="close-x" onclick="go('customer-home')">✕</span><div class="logo">🔔 নোটিফিকেশন</div><span></span></div></header>
+    <main><div id="custNotifList"></div></main>
+  </div>
+
+  <div id="view-customer-profile" class="view" data-role="customer">
+    <header class="top"><div class="top-row"><div class="logo">👤 প্রোফাইল</div><span></span></div></header>
+    <main>
+      <div class="req-card" id="custProfileCard"></div>
+      <span class="logout-link" onclick="logoutRole('customer')">লগ আউট করুন</span>
+      <h2 class="section">সংরক্ষিত প্রোভাইডার</h2>
+      <div class="empty">এখনো কোনো প্রোভাইডার সেভ করা হয়নি</div>
+    </main>
+  </div>
+
+  <!-- ===== PROVIDER VIEWS ===== -->
+  <div id="view-provider-dash" class="view" data-role="provider">
+    <header class="top">
+      <div class="top-row">
+        <div class="logo">🛠️ প্রোভাইডার ড্যাশবোর্ড</div>
+        <div class="icon-btn" onclick="go('provider-notif')">🔔<span class="dot" id="provNotifDot" style="display:none"></span></div>
+      </div>
+    </header>
+    <main>
+      <div class="avail-toggle">
+        <div><b>স্ট্যাটাস:</b> <span id="availLabel">Available</span></div>
+        <div class="switch on" id="availSwitch" onclick="toggleAvail()"></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="num" id="pStatNew">0</div><div class="lbl">নতুন Request</div></div>
+        <div class="stat"><div class="num" id="pStatDone">0</div><div class="lbl">সম্পন্ন সেবা</div></div>
+      </div>
+      <div class="tag-row" id="provFilterRow"></div>
+      <div id="providerRequestList"></div>
+    </main>
+  </div>
+
+  <div id="view-provider-notif" class="view" data-role="provider">
+    <header class="top"><div class="top-row"><span class="close-x" onclick="go('provider-dash')">✕</span><div class="logo">🔔 নোটিফিকেশন</div><span></span></div></header>
+    <main><div id="provNotifList"></div></main>
+  </div>
+
+  <div id="view-provider-profile" class="view" data-role="provider">
+    <header class="top"><div class="top-row"><div class="logo">👤 প্রোফাইল</div><span></span></div></header>
+    <main>
+      <div class="req-card" id="provProfileCard"></div>
+      <span class="logout-link" onclick="logoutRole('provider')">লগ আউট করুন</span>
+      <h2 class="section">মনিটাইজেশন প্ল্যান</h2>
+      <div class="plans">
+        <div class="plan">ফ্রি<b>লিস্টিং</b></div>
+        <div class="plan">প্রিমিয়াম<b>লিস্টিং</b></div>
+        <div class="plan">ফিচার্ড<b>প্রোভাইডার</b></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Bottom navs ===== -->
+  <div class="bottom-nav" id="nav-customer" data-role="customer">
+    <div class="nav-item active" data-target="customer-home"><span class="em">🏠</span>হোম</div>
+    <div class="nav-item" data-target="customer-search"><span class="em">🔍</span>খুঁজুন</div>
+    <div class="nav-item" data-target="customer-requests"><span class="em">📋</span>Request</div>
+    <div class="nav-item" data-target="customer-notif"><span class="em">🔔</span>নোটিফিকেশন</div>
+    <div class="nav-item" data-target="customer-profile"><span class="em">👤</span>প্রোফাইল</div>
+  </div>
+  <div class="bottom-nav" id="nav-provider" data-role="provider" style="display:none">
+    <div class="nav-item active" data-target="provider-dash"><span class="em">🏠</span>ড্যাশবোর্ড</div>
+    <div class="nav-item" data-target="provider-notif"><span class="em">🔔</span>নোটিফিকেশন</div>
+    <div class="nav-item" data-target="provider-profile"><span class="em">👤</span>প্রোফাইল</div>
+  </div>
+
+  <!-- Request modal -->
+  <div class="modal-bg" id="reqModalBg">
+    <div class="modal">
+      <span class="close-x" onclick="closeModal('reqModalBg')">✕</span>
+      <h3>সেবা Request ফর্ম</h3>
+      <div id="reqModalProviderInfo" class="pmeta" style="margin-bottom:10px;"></div>
+      <div class="field"><label>আপনার নাম</label><input id="fName" placeholder="যেমনঃ রহিম উদ্দিন"></div>
+      <div class="field"><label>মোবাইল নম্বর</label><input id="fMobile" placeholder="01XXXXXXXXX"></div>
+      <div class="field"><label>সম্পূর্ণ ঠিকানা</label><input id="fAddress" placeholder="বাসা/রোড নং"></div>
+      <div class="field"><label>জেলা</label><input id="fDistrict" placeholder="রংপুর"></div>
+      <div class="field"><label>উপজেলা/এলাকা</label><input id="fUpazila" placeholder="দেবীগঞ্জ"></div>
+      <div class="field"><label>সমস্যা / সেবার বিবরণ</label><textarea id="fDetails" placeholder="বিস্তারিত লিখুন..."></textarea></div>
+      <div class="field"><label>পছন্দের সময়</label><input id="fTime" placeholder="যেমনঃ আজ বিকাল ৫টা"></div>
+      <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="submitRequest()">Request পাঠান</button>
+    </div>
+  </div>
+
+  <!-- Provider detail modal -->
+  <div class="modal-bg" id="provModalBg">
+    <div class="modal" id="provModalBody"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ---------- Data ---------- */
+const CATS = [
+  {id:'electrician',name:'ইলেকট্রিশিয়ান',em:'⚡'},{id:'plumber',name:'প্লাম্বার',em:'🔧'},
+  {id:'doctor',name:'ডাক্তার',em:'🩺'},{id:'acrepair',name:'AC Repair',em:'❄️'},
+  {id:'mechanic',name:'কার মেকানিক',em:'🚗'},{id:'tutor',name:'হোম টিউটর',em:'📘'},
+  {id:'cleaning',name:'হাউস ক্লিনিং',em:'🧹'},{id:'mobile',name:'মোবাইল রিপেয়ার',em:'📱'},
+  {id:'salon',name:'সেলুন',em:'💇'},{id:'lawyer',name:'আইনজীবী',em:'⚖️'},
+  {id:'carpenter',name:'কাঠমিস্ত্রি',em:'🪚'},{id:'painter',name:'রংমিস্ত্রি',em:'🎨'},
+  {id:'courier',name:'কুরিয়ার',em:'📦'},{id:'photographer',name:'ফটোগ্রাফার',em:'📷'},
+  {id:'ambulance',name:'অ্যাম্বুলেন্স',em:'🚑'},{id:'pest',name:'পেস্ট কন্ট্রোল',em:'🐜'},
+];
+const PROVIDERS = [
+  {id:1,name:'করিম ইলেকট্রিক সার্ভিস',cat:'electrician',area:'দেবীগঞ্জ',rating:4.8,verified:true,available:true,mobile:'01711000001',price:'৩০০৳ থেকে'},
+  {id:2,name:'ঢাকা প্লাম্বিং সলিউশন',cat:'plumber',area:'দেবীগঞ্জ',rating:4.5,verified:true,available:true,mobile:'01711000002',price:'৪০০৳ থেকে'},
+  {id:3,name:'ডাঃ নাসরিন সুলতানা',cat:'doctor',area:'রংপুর সদর',rating:4.9,verified:true,available:false,mobile:'01711000003',price:'৫০০৳ ভিজিট'},
+  {id:4,name:'কুল টেক AC সার্ভিস',cat:'acrepair',area:'দেবীগঞ্জ',rating:4.3,verified:true,available:true,mobile:'01711000004',price:'৫০০৳ থেকে'},
+  {id:5,name:'রহমান অটো গ্যারেজ',cat:'mechanic',area:'পঞ্চগড়',rating:4.6,verified:true,available:true,mobile:'01711000005',price:'২০০৳ থেকে'},
+  {id:6,name:'ব্রাইট মাইন্ড টিউটোরিয়াল',cat:'tutor',area:'দেবীগঞ্জ',rating:4.7,verified:false,available:true,mobile:'01711000006',price:'১৫০০৳/মাস'},
+];
+let state = JSON.parse(localStorage.getItem('sebaghor_state')||'null') || {
+  requests:[], notifCust:[], notifProv:[], notifAdmin:[], available:true,
+  session:{customer:null, provider:null, admin:false},
+  users:{customers:[], providers:[{name:'করিম উদ্দিন', mobile:'01711000001', password:'demo123', providerId:1}]}
+};
+if(!state.session) state.session = {customer:null, provider:null, admin:false};
+if(!state.users) state.users = {customers:[], providers:[{name:'করিম উদ্দিন', mobile:'01711000001', password:'demo123', providerId:1}]};
+function save(){ localStorage.setItem('sebaghor_state', JSON.stringify(state)); render(); }
+
+let currentRole='customer', selectedProvider=null, reqFilter='all', provFilter='all';
+
+/* ---------- Auth helpers ---------- */
+function getAllProviders(){
+  const regd = (state.users.providers||[]).filter(u=>u.providerId>1000).map(u=>({
+    id:u.providerId, name:u.business, cat:u.cat, area:u.upazila||u.district, rating:0,
+    verified:false, available:true, mobile:u.mobile, price:u.price||'যোগাযোগ করুন', hours:u.hours, desc:u.desc
+  }));
+  return PROVIDERS.concat(regd);
+}
+function currentCustomer(){ return state.users.customers.find(c=>c.mobile===state.session.customer) || null; }
+function currentProvider(){ 
+  const u = state.users.providers.find(p=>p.mobile===state.session.provider);
+  if(!u) return null;
+  return getAllProviders().find(p=>p.id===u.providerId) || null;
+}
+function setAuthTab(who,tab){
+  document.getElementById(who+'TabLogin').classList.toggle('active', tab==='login');
+  document.getElementById(who+'TabSignup').classList.toggle('active', tab==='signup');
+  document.getElementById(who+'LoginForm').style.display = tab==='login' ? 'block':'none';
+  document.getElementById(who+'SignupForm').style.display = tab==='signup' ? 'block':'none';
+}
+function doCustomerLogin(){
+  const m=document.getElementById('clMobile').value.trim(), p=document.getElementById('clPass').value;
+  const u = state.users.customers.find(c=>c.mobile===m && c.password===p);
+  if(!u){ document.getElementById('custLoginErr').textContent='মোবাইল নম্বর অথবা পাসওয়ার্ড সঠিক নয়।'; document.getElementById('custLoginErr').style.display='block'; return; }
+  if(u.blocked){ document.getElementById('custLoginErr').textContent='আপনার অ্যাকাউন্ট ব্লক করা হয়েছে। সহায়তার জন্য যোগাযোগ করুন।'; document.getElementById('custLoginErr').style.display='block'; return; }
+  state.session.customer = m; save(); go('customer-home'); toast('স্বাগতম, '+u.name+'!');
+}
+function doCustomerRegister(){
+  const name=document.getElementById('csName').value.trim(), mobile=document.getElementById('csMobile').value.trim();
+  const address=document.getElementById('csAddress').value.trim(), pass=document.getElementById('csPass').value;
+  const err=document.getElementById('custSignupErr');
+  if(!name||!mobile||!pass){ err.textContent='নাম, মোবাইল ও পাসওয়ার্ড আবশ্যক।'; err.style.display='block'; return; }
+  if(state.users.customers.some(c=>c.mobile===mobile)){ err.textContent='এই মোবাইল নম্বরে অ্যাকাউন্ট আগে থেকেই আছে।'; err.style.display='block'; return; }
+  state.users.customers.push({name,mobile,address,password:pass});
+  state.session.customer = mobile; save(); go('customer-home'); toast('অ্যাকাউন্ট তৈরি হয়েছে। স্বাগতম, '+name+'!');
+}
+function doProviderLogin(){
+  const m=document.getElementById('plMobile').value.trim(), p=document.getElementById('plPass').value;
+  const u = state.users.providers.find(x=>x.mobile===m && x.password===p);
+  if(!u){ document.getElementById('provLoginErr').textContent='মোবাইল নম্বর অথবা পাসওয়ার্ড সঠিক নয়।'; document.getElementById('provLoginErr').style.display='block'; return; }
+  state.session.provider = m; save(); go('provider-dash'); toast('স্বাগতম!');
+}
+function fillCatOptions(){
+  const sel = document.getElementById('psCat');
+  if(sel && !sel.dataset.filled){ sel.innerHTML = CATS.map(c=>`<option value="${c.id}">${c.em} ${c.name}</option>`).join(''); sel.dataset.filled='1'; }
+}
+function doProviderRegister(){
+  fillCatOptions();
+  const name=document.getElementById('psName').value.trim(), mobile=document.getElementById('psMobile').value.trim();
+  const business=document.getElementById('psBusiness').value.trim(), pass=document.getElementById('psPass').value;
+  const err=document.getElementById('provSignupErr');
+  if(!name||!mobile||!business||!pass){ err.textContent='নাম, মোবাইল, ব্যবসার নাম ও পাসওয়ার্ড আবশ্যক।'; err.style.display='block'; return; }
+  if(state.users.providers.some(p=>p.mobile===mobile)){ err.textContent='এই মোবাইল নম্বরে অ্যাকাউন্ট আগে থেকেই আছে।'; err.style.display='block'; return; }
+  const providerId = Date.now();
+  state.users.providers.push({
+    name, mobile, business, cat:document.getElementById('psCat').value,
+    district:document.getElementById('psDistrict').value, upazila:document.getElementById('psUpazila').value,
+    address:document.getElementById('psAddress').value, price:document.getElementById('psPrice').value,
+    hours:document.getElementById('psHours').value, desc:document.getElementById('psDesc').value,
+    password:pass, providerId
+  });
+  state.notifAdmin.unshift({id:Date.now(), text:`🆕 নতুন প্রোভাইডার রেজিস্ট্রেশন: ${business} — Approval প্রয়োজন`, ts:Date.now(), providerId});
+  state.session.provider = mobile; save(); go('provider-dash');
+  toast('রেজিস্ট্রেশন সম্পন্ন! আপনার স্ট্যাটাস Pending Verification।');
+}
+function logoutRole(role){
+  if(role==='customer') state.session.customer=null;
+  if(role==='provider') state.session.provider=null;
+  save(); switchRole(role);
+}
+
+/* ---------- Navigation ---------- */
+function go(target){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+target).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.target===target));
+}
+document.querySelectorAll('.nav-item').forEach(n=> n.addEventListener('click', ()=>{
+  if(document.getElementById('nav-'+currentRole).style.display!=='none') go(n.dataset.target);
+}) );
+document.querySelectorAll('.demo-switch button').forEach(b=> b.addEventListener('click', ()=>switchRole(b.dataset.role)) );
+
+function switchRole(role){
+  currentRole = role;
+  document.querySelectorAll('.demo-switch button').forEach(b=>b.classList.toggle('active', b.dataset.role===role));
+  const loggedIn = role==='customer' ? !!state.session.customer : !!state.session.provider;
+  document.getElementById('nav-customer').style.display = (role==='customer' && loggedIn) ? 'flex':'none';
+  document.getElementById('nav-provider').style.display = (role==='provider' && loggedIn) ? 'flex':'none';
+  fillCatOptions();
+  if(!loggedIn){ go(role+'-auth'); render(); return; }
+  if(role==='customer') go('customer-home');
+  if(role==='provider') go('provider-dash');
+  render();
+}
+
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function alertMsg(msg){ toast(msg); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+/* ---------- Render categories ---------- */
+function catCard(c){ return `<div class="cat" onclick="openCategory('${c.id}')"><span class="em">${c.em}</span>${c.name}</div>`; }
+function renderCats(){
+  document.getElementById('catGrid').innerHTML = CATS.slice(0,8).map(catCard).join('');
+  document.getElementById('catGridFull').innerHTML = CATS.map(catCard).join('');
+}
+function openCategory(catId){
+  const cat = CATS.find(c=>c.id===catId);
+  document.getElementById('catTitle').textContent = cat.em+' '+cat.name;
+  const list = getAllProviders().filter(p=>p.cat===catId && p.verified);
+  document.getElementById('catProviderList').innerHTML = list.length? list.map(providerCard).join('') : `<div class="empty">এই ক্যাটাগরিতে এখনো কোনো ভেরিফাইড প্রোভাইডার নেই</div>`;
+  go('customer-category');
+}
+
+/* ---------- Provider cards ---------- */
+function providerCard(p){
+  return `<div class="provider-card">
+    <div class="avatar">${CATS.find(c=>c.id===p.cat).em}</div>
+    <div class="pinfo">
+      <div class="pname">${p.name} ${p.verified?'<span class="badge-verified">✔️ Verified</span>':''}</div>
+      <div class="pmeta">${CATS.find(c=>c.id===p.cat).name} • ${p.area} • ⭐ ${p.rating}</div>
+      <div class="pstatus ${p.available?'on':'off'}">${p.available?'● Available':'● Busy'}</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" ${!p.available?'disabled':''} onclick="openProviderModal(${p.id})">সেবা Request করুন</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderProviderList(){
+  document.getElementById('providerList').innerHTML = getAllProviders().filter(p=>p.verified).map(providerCard).join('');
+}
+function openProviderModal(id){
+  if(!state.session.customer){ toast('Request পাঠাতে প্রথমে লগ ইন করুন'); switchRole('customer'); return; }
+  selectedProvider = getAllProviders().find(p=>p.id===id);
+  document.getElementById('provModalBody').innerHTML = `
+    <span class="close-x" onclick="closeModal('provModalBg')">✕</span>
+    <h3>${selectedProvider.name} ${selectedProvider.verified?'✔️':''}</h3>
+    <div class="pmeta">${CATS.find(c=>c.id===selectedProvider.cat).name} • ${selectedProvider.area}</div>
+    <div class="pmeta">⭐ ${selectedProvider.rating||'নতুন'} • শুরু ${selectedProvider.price}</div>
+    <div class="pmeta" style="margin:8px 0 14px;">📞 নম্বর গ্রহণের পর দেখানো হবে (Accept হওয়ার আগে গোপন)</div>
+    <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="closeModal('provModalBg');openRequestForm();">সেবা Request করুন</button>`;
+  document.getElementById('provModalBg').classList.add('open');
+}
+function openRequestForm(){
+  document.getElementById('reqModalProviderInfo').textContent = `প্রোভাইডার: ${selectedProvider.name} (${CATS.find(c=>c.id===selectedProvider.cat).name})`;
+  const cust = currentCustomer();
+  if(cust){
+    document.getElementById('fName').value = cust.name; document.getElementById('fName').readOnly = true;
+    document.getElementById('fMobile').value = cust.mobile; document.getElementById('fMobile').readOnly = true;
+    document.getElementById('fAddress').value = cust.address||'';
+  }
+  document.getElementById('reqModalBg').classList.add('open');
+}
+function submitRequest(){
+  const name=document.getElementById('fName').value.trim();
+  const mobile=document.getElementById('fMobile').value.trim();
+  if(!name||!mobile){ toast('নাম ও মোবাইল নম্বর আবশ্যক'); return; }
+  const req = {
+    id: Date.now(), providerId: selectedProvider.id, providerName: selectedProvider.name,
+    cat: selectedProvider.cat, custName:name, custMobile:mobile,
+    address:document.getElementById('fAddress').value, district:document.getElementById('fDistrict').value,
+    upazila:document.getElementById('fUpazila').value, details:document.getElementById('fDetails').value,
+    prefTime:document.getElementById('fTime').value, status:'pending', createdAt:Date.now(), acceptedAt:null
+  };
+  state.requests.push(req);
+  state.notifProv.unshift({id:Date.now(), text:`নতুন Request: ${name} - ${req.details||'সেবা প্রয়োজন'}`, ts:Date.now()});
+  save();
+  closeModal('reqModalBg');
+  toast('আপনার Request সফলভাবে পাঠানো হয়েছে।');
+  go('customer-requests');
+  // 5-minute unanswered watcher
+  setTimeout(()=>checkUnanswered(req.id), 5*60*1000);
+}
+function checkUnanswered(reqId){
+  const r = state.requests.find(x=>x.id===reqId);
+  if(r && r.status==='pending' && !r.adminAlerted){
+    r.adminAlerted = true;
+    state.notifAdmin.unshift({id:Date.now(), text:`⚠️ Unanswered Service Request — ${r.providerName} / ${r.custName}`, reqId:r.id, ts:Date.now()});
+    save();
+  }
+}
+
+/* ---------- Customer requests list ---------- */
+const REQ_FILTERS = [['all','সব'],['pending','Pending'],['accepted','Accepted'],['rejected','Rejected'],['completed','Completed']];
+function renderReqFilters(){
+  document.getElementById('reqFilterRow').innerHTML = REQ_FILTERS.map(([k,l])=>`<div class="tag ${reqFilter===k?'active':''}" onclick="setReqFilter('${k}')">${l}</div>`).join('');
+}
+function setReqFilter(k){ reqFilter=k; render(); }
+function statusLabel(s){ return {pending:'Pending',accepted:'Accepted',rejected:'Rejected',completed:'Completed'}[s]; }
+function renderMyRequests(){
+  renderReqFilters();
+  let list = state.requests.filter(r=>r.custMobile===state.session.customer).slice().reverse();
+  if(reqFilter!=='all') list = list.filter(r=>r.status===reqFilter);
+  document.getElementById('myRequestsList').innerHTML = list.length? list.map(r=>`
+    <div class="req-card">
+      <div class="req-top"><b>${r.providerName}</b><span class="status-chip ${r.status}">${statusLabel(r.status)}</span></div>
+      <div class="pmeta">${CATS.find(c=>c.id===r.cat).name}</div>
+      <div class="pmeta">${new Date(r.createdAt).toLocaleString('bn-BD')}</div>
+      ${r.status==='accepted'?`<div class="pmeta">📞 ${PROVIDERS.find(p=>p.id===r.providerId).mobile} (এখন দৃশ্যমান)</div>`:''}
+      ${r.status==='completed' && !r.reviewed ? `<button class="btn btn-outline" style="margin-top:8px;" onclick="rateRequest(${r.id})">রিভিউ দিন</button>`:''}
+      ${r.reviewed?`<div class="pmeta">আপনার রেটিং: ${'⭐'.repeat(r.rating)}</div>`:''}
+    </div>`).join('') : `<div class="empty">কোনো Request পাওয়া যায়নি</div>`;
+}
+function rateRequest(id){
+  const r = state.requests.find(x=>x.id===id);
+  r.reviewed = true; r.rating = 5;
+  save(); toast('ধন্যবাদ! আপনার রিভিউ জমা হয়েছে।');
+}
+
+/* ---------- Customer notifications ---------- */
+function renderCustNotif(){
+  const list = state.requests.filter(r=>r.custMobile===state.session.customer).slice().reverse().map(r=>{
+    if(r.status==='accepted') return {text:`🎉 আপনার Service Request Accepted — ${r.providerName}`, ts:r.acceptedAt||r.createdAt};
+    if(r.status==='rejected') return {text:`আপনার Service Request এই Provider (${r.providerName}) গ্রহণ করতে পারেননি।`, ts:r.createdAt};
+    if(r.status==='completed') return {text:`✅ সেবা সম্পন্ন হয়েছে — ${r.providerName}`, ts:r.createdAt};
+    return {text:`⏳ আপনার Request ${r.providerName}-এর কাছে পাঠানো হয়েছে`, ts:r.createdAt};
+  });
+  document.getElementById('custNotifList').innerHTML = list.length? list.map(n=>`<div class="req-card">${n.text}<div class="pmeta">${new Date(n.ts).toLocaleString('bn-BD')}</div></div>`).join(''):`<div class="empty">কোনো নোটিফিকেশন নেই</div>`;
+  document.getElementById('custNotifDot').style.display = list.some(n=>n.ts>(state._lastCustSeen||0)) ? 'block':'none';
+}
+
+/* ---------- Provider dashboard ---------- */
+function toggleAvail(){ state.available = !state.available; save(); }
+const PROV_FILTERS = [['all','সব'],['pending','Pending'],['accepted','Accepted'],['completed','Completed']];
+function renderProvFilters(){
+  document.getElementById('provFilterRow').innerHTML = PROV_FILTERS.map(([k,l])=>`<div class="tag ${provFilter===k?'active':''}" onclick="setProvFilter('${k}')">${l}</div>`).join('');
+}
+function setProvFilter(k){ provFilter=k; render(); }
+function renderProviderDash(){
+  if(!state.session.provider) return;
+  document.getElementById('availSwitch').classList.toggle('on', state.available);
+  document.getElementById('availLabel').textContent = state.available ? 'Available':'Busy';
+  const me = currentProvider();
+  const all = me ? state.requests.filter(r=>r.providerId===me.id) : [];
+  document.getElementById('pStatNew').textContent = all.filter(r=>r.status==='pending').length;
+  document.getElementById('pStatDone').textContent = all.filter(r=>r.status==='completed').length;
+  renderProvFilters();
+  let list = all.slice().reverse();
+  if(provFilter!=='all') list = list.filter(r=>r.status===provFilter);
+  document.getElementById('providerRequestList').innerHTML = list.length? list.map(r=>`
+    <div class="req-card">
+      <div class="req-top"><b>${r.custName}</b><span class="status-chip ${r.status}">${statusLabel(r.status)}</span></div>
+      <div class="pmeta">${CATS.find(c=>c.id===r.cat).name} • ${r.upazila||''}</div>
+      <div class="pmeta">সমস্যা: ${r.details||'উল্লেখ নেই'}</div>
+      <div class="pmeta">পছন্দের সময়: ${r.prefTime||'-'}</div>
+      ${r.status==='pending'?`<div class="btn-row"><button class="btn btn-primary" onclick="acceptReq(${r.id})">✅ Accept</button><button class="btn btn-danger" onclick="rejectReq(${r.id})">❌ Reject</button></div>`:''}
+      ${r.status==='accepted'?`<div class="pmeta">📞 কাস্টমার: ${r.custMobile}</div><button class="btn btn-outline" style="margin-top:8px;" onclick="completeReq(${r.id})">সম্পন্ন হিসেবে চিহ্নিত করুন</button>`:''}
+    </div>`).join('') : `<div class="empty">কোনো Request নেই</div>`;
+}
+function acceptReq(id){
+  const r = state.requests.find(x=>x.id===id);
+  r.status='accepted'; r.acceptedAt=Date.now();
+  state.notifCust.unshift({id:Date.now(), text:`🎉 আপনার Service Request Accepted — ${r.providerName}`, ts:Date.now()});
+  save(); toast('Request গ্রহণ করা হয়েছে');
+}
+function rejectReq(id){
+  const r = state.requests.find(x=>x.id===id);
+  r.status='rejected';
+  save(); toast('Request প্রত্যাখ্যান করা হয়েছে');
+}
+function completeReq(id){
+  const r = state.requests.find(x=>x.id===id);
+  r.status='completed';
+  save(); toast('সেবা সম্পন্ন হিসেবে চিহ্নিত হয়েছে');
+}
+function renderProvNotif(){
+  document.getElementById('provNotifList').innerHTML = state.notifProv.length? state.notifProv.map(n=>`<div class="req-card">${n.text}<div class="pmeta">${new Date(n.ts).toLocaleString('bn-BD')}</div></div>`).join(''):`<div class="empty">কোনো নোটিফিকেশন নেই</div>`;
+  document.getElementById('provNotifDot').style.display = state.notifProv.length? 'block':'none';
+}
+
+/* ---------- Admin dashboard ---------- */
+function renderProfiles(){
+  const c = currentCustomer();
+  if(c) document.getElementById('custProfileCard').innerHTML = `<b>${c.name}</b><div class="pmeta">📱 ${c.mobile}</div><div class="pmeta">📍 ${c.address||'ঠিকানা নেই'}</div>`;
+  const p = currentProvider();
+  if(p) document.getElementById('provProfileCard').innerHTML = `<div class="pname">${p.name} ${p.verified?'<span class="badge-verified">✔️</span>':'<span class="pmeta">(Pending Verification)</span>'}</div>
+    <div class="pmeta">${CATS.find(c=>c.id===p.cat).name} • ${p.area}</div>
+    <div class="pmeta">শুরু ${p.price||'-'} • ${p.hours||'সময় উল্লেখ নেই'}</div>`;
+}
+
+/* ---------- Master render ---------- */
+function render(){
+  renderCats(); renderProviderList(); renderMyRequests(); renderCustNotif();
+  renderProviderDash(); renderProvNotif(); renderProfiles();
+}
+fillCatOptions();
+switchRole('customer');
+</script>
+</body>
+</html>
